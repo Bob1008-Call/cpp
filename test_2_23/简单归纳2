@@ -1,0 +1,127 @@
+1.指针和引用的区别
+ 相同点：
+（1）都是地址的概念；指针指向一块内存，它的内容是所指内存的地址；而引用则是某块内存的别名。
+ 不同点：
+（1）指针是一个实体，而引用仅是个别名
+（2） 引用只能并且必须在定义时被初始化一次，之后不可变（类似常量指针，引用自带常量指针属性）；指针可变；
+（3） 引用没有const，指针有const，const的指针不能够改变；（int & const refer 不存在，因为引用本身就初始化一次不可变，但是const int &refer是存在的，指引用所指向的值不可改变）
+（4）引用不能为空，指针可以为空
+（5）sizeof针对指针得到的是指针的大小，针对引用得到的是指向对象的大小；
+（6）指针的++操作和引用的++操作完全不同，指针为移动指针地址，引用++操作作用于指向的对象；
+（7）引用是类型安全的，而指针不是类型安全的。
+
+2.内存泄漏和内存溢出的区别
+（1）内存溢出是指申请的空间不够使用，比如申请了int型的内容，但是要放入long型的内容。就会溢出
+（2）内存泄漏是指申请的空间无法释放，内存泄漏堆积后果很严重。
+
+3.栈和堆存储的内容
+int b; //栈
+char s[] = "abc";//栈
+char* p1;//栈
+char* p2 = "123456";//123456\0存放在常量区，p2在栈上
+static int c = 0;//全局初始化区
+p3 = (char*)malloc(20);//堆区
+
+4.空类的默认成员函数
+（1）构造函数
+（2）拷贝构造函数
+（3）析构函数
+（4）赋值运算符
+（5）取地址运算
+（6）const取地址运算
+
+5.非递归遍历二叉树
+（1）前序
+void preOrder(BTNode* root)
+{
+  if(NULL == root)
+  {
+    return;
+  }
+  stack s;
+  s.push(root);
+  while(!s.empty())
+  {
+    BTNode* cur = s.top();
+    printf("%d ",cur->data);
+    s.pop();
+    if(cur->right)
+    {
+      s.push(cur->right);
+    }
+    if(cur->left)
+    {
+      s.push(cur->left);
+    }
+  }
+}
+（2）中序
+void InOrder(BTNode* root)
+{
+  if(NULL == root)
+    return;
+  stack s;
+  BTNode *cur = root;
+  while(cur || !s.empty())
+  {
+    while(cur)
+    {
+      s.push(cur);
+      cur = cur->left;
+    }
+    cur = s.top();
+    printf("%d",cur->data);
+    s.pop();
+    cur = cur-right;
+  }
+}
+（3）后序
+void PosOrder(BTNode* root)
+{
+  if(NULL == root)
+    return;
+  stack s;
+  BTNode* cur = root;
+  BTNode* visit = NULL;
+  while(cur ||s.empty())
+  {
+    while(cur)
+    {
+      s.push(cur);
+      cur = cur->left;
+    }
+    cur = s.top();
+    if(cur->right == NULL || cur->right == visit)
+    {
+      printf("%c ",cur->data);
+      s.pop();
+      visit = cur;
+      cur = NULL;
+    }
+    else
+    {
+      cur = cur->right;
+    }
+  }
+}
+
+6.大小端
+（1）大端：数据的高位存储在低地址中，数据的地位存储在高地址中
+（2）小端：数据的地位存储在低地址中，数据的高位存储在高地址中
+（3）测试大小端
+int main()
+{
+  int a = 0x12345678;
+  char b = a;
+  printf("%x",b);//如果输出是78，就是小端，如果是12，就是大端
+  return 0;
+}
+
+7.数组指针和指针数组
+（1）数组指针：int (*)array[2];//是个指针，
+（2）指针数组：int *array[2];//是个数组，每个元素是一个指针
+
+8.回调函数的使用
+回调函数就是通过函数指针调用的函数，如果把函数的指针（地址）作为参数传给另一个函数，那么当这个指针被用来调用其所指向的函数时，我们就说这是回调函数，回调函数不是由该函数的实现方法直接调用，而是在特定的事件或条件发生时由另外的一方调用的，通俗点讲就是将某个实现函数作为参数传入另一个函数中去
+
+
