@@ -1,0 +1,35 @@
+输入: "Let's take LeetCode contest"
+输出: "s'teL ekat edoCteeL tsetnoc" 
+
+class Solution {
+public:
+    string reverseWords(string s) {
+        string str;
+        string res;
+        int begin = 0;
+        int count = 0;
+        if(s.find(' ') == string::npos)
+        {
+            reverse(s.begin(),s.end());
+            return s;
+        }
+        for(int i = 0;i<s.size();++i)
+        {
+            if(s[i] == ' ' || (i == s.size()-1))
+            {
+                str = s.substr(begin,count);
+                reverse(str.begin(),str.end());
+                if(i == s.size()-1)
+                    res = res +' '+str;
+                else
+                    res += str;
+                begin = i+1;
+                count = 0;
+            }
+            count++;
+        }
+        return res;
+    }
+};
+
+
