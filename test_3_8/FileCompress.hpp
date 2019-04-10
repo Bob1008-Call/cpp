@@ -46,7 +46,7 @@ public:
 		}
 	}
 
-	void ReadLine(FILE* fIn, string &line)
+	static void ReadLine(FILE* fIn, string &line)
 	{
 		while (!feof(fIn))
 		{
@@ -86,7 +86,7 @@ public:
 		fwrite(strInfo.c_str(), 1, strInfo.size(), fOut);
 	}
 
-	void Compress(const char* filename)
+  void Compress(const char* filename)
 	{
 		FILE* fIn = fopen(filename, "rb");
 		assert(fIn);
@@ -261,7 +261,7 @@ public:
 		}
 	}
 
-	string& vectorTostring(vector<char>& vec, string& str)
+	static string& vectorTostring(vector<char>& vec, string& str)
 	{
 		for (int i = 0; i < vec.size(); i++)
 		{

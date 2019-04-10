@@ -2,12 +2,11 @@
 #pragma once
 #include <iostream>
 #include <assert.h>
-using namespace std;
 #include <string>
 #include <queue>
 #include <algorithm>
 #include <vector>
-
+using namespace std;
 
 //不等长编码：一个字符的编码不能是另一个字符编码的前缀
 //1.统计文件中每个字符出现的次数
@@ -75,7 +74,7 @@ public:
 		:_root(nullptr)
 	{}
 
-	void _Destroy(Node* root)
+  static void _Destroy(Node* root)
 	{
 		if (root)
 		{
@@ -91,7 +90,7 @@ public:
 		_Destroy(_root);
 	}
 
-	Node* GetRoot()
+  Node* GetRoot()
 	{
 		return _root;
 	}
