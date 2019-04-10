@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <jsoncpp/json/json.h>
 #include "util.hpp"
+using namespace std;
 //完成在线编译模块
 //提供一个 Compiler 类，提供一个核心的CompileAndRun
 
@@ -16,32 +17,32 @@ public:
 
   //形如tmp_1553408103.1.cpp
   //1.源代码文件
-  static std::string SrcPath(const std::string& name)
+  static string SrcPath(const string& name)
   {
     return "./temp_files/" + name + ".cpp";
   }
   //2.编译错误文件
-  static std::string CompileErrorPath(const std::string& name)
+  static string CompileErrorPath(const string& name)
   {
     return "./temp_files/" + name + ".compile_error";
   }
   //3.可执行程序文件
-  static std::string ExePath(const std::string& name)
+  static string ExePath(const string& name)
   {
     return "./temp_files/" + name + ".exe";
   }
   //4.标准输入文件
-  static std::string StdinPath(const std::string& name)
+  static string StdinPath(const string& name)
   {
     return "./temp_files/" + name + ".stdin";
   }
   //5.标准输出文件
-  static std::string StdoutPath(const std::string& name)
+  static string StdoutPath(const string& name)
   {
     return "./temp_files/" + name + ".stdout";
   }
   //6.标准错误文件
-  static std::string StderrPath(const std::string& name)
+  static string StderrPath(const string& name)
   {
     return "./temp_files/" + name + ".stderr";
   }
@@ -54,15 +55,15 @@ public:
     {
       (*resp)["error"] = 3;
       (*resp)["reason"] = "code empty";
-      LOG(ERROR) << "code empty" << std::endl;
+      LOG(ERROR) << "code empty" << endl;
       return false;
     }
     //req["code"]根据key取出Value，value类型也是
     //Json::Value.通过asString()转成字符串
-    const std::string& code = req["code"].asString();
+    const string& code = req["code"].asString();
     
     //这个函数把代码写到代码文件中
-    std::string file_name = WriteTmpFile(code,req["stdin"].asString());
+    string file_name = WriteTmpFile(code,req["stdin"].asString());
     //2.调用g++进行编译（fork+exec/system）
     //生成可执行程序，如果编译出错
     //需要把错误记录下来（重定向到文件中）
@@ -70,10 +71,10 @@ public:
     if(!ret)
     {
       (*resp)["error"] = 1;
-      std::string reason;
+      string reason;
       FileUtil::Read(CompileErrorPath(file_name),&reason);
       (*resp)["reason"] = reason;
-      LOG(INFO) << "Compile failed" << std::endl;
+      LOG(INFO) << "Compile failed" << endl;
       return false;
     }
     //3.调用可执行程序，把标准输入记录到文件中，然后
@@ -83,20 +84,20 @@ public:
     if(sig != 0)
     {
       (*resp)["error"] = 2;
-      (*resp)["reason"] = "Program exit by signo: " + std::to_string(sig);
-      LOG(INFO) << "Program exit by signo:" << std::to_string(sig) << std::endl;
+      (*resp)["reason"] = "Program exit by signo: " + to_string(sig);
+      LOG(INFO) << "Program exit by signo:" << to_string(sig << endl;
       return false;
     }
     //4.把程序的最终结果进行返回，构造resp对象
     (*resp)["error"] = 0;
     (*resp)["reason"] = "";
-    std::string str_stdout;
+    string str_stdout;
     FileUtil::Read(StdoutPath(file_name),&str_stdout);
     (*resp)["stdout"] = str_stdout;
-    std::string str_stderr;
+    string str_stderr;
     FileUtil::Read(StderrPath(file_name),&str_stderr);
     (*resp)["stderr"] = str_stderr;
-    LOG(INFO) << "Program " << file_name << " Done" <<std::endl;
+    LOG(INFO) << "Program " << file_name << " Done" <<endl;
     return true;
   }
 
@@ -104,19 +105,19 @@ private:
   //1.把代码写到文件里面
   //2.给这次请求分配一个唯一的名字
   // tmp_1553408103.2
-  static std::string WriteTmpFile(const std::string& code,const std::string& str_stdin)
+  static string WriteTmpFile(const string& code,const string& str_stdin)
   {
-    static std::atomic_int id(0);
+    static atomic_int id(0);
     ++id;
-    std::string file_name = "tmp_"
-      + std::to_string(TimeUtil::TimeStamp())
-      + "." + std::to_string(id);
+    string file_name = "tmp_"
+      + to_string(TimeUtil::TimeStamp())
+      + "." + to_string(id);
     FileUtil::Write(SrcPath(file_name).c_str(),code);
     //把标准输入也写到文件中
     FileUtil::Write(StdinPath(file_name).c_str(),str_stdin);
     return file_name;
   }
-  static bool Compile(const std::string& file_name)
+  static bool Compile(const string& file_name)
   {
     char* command[20] = {0};
     char buf[20][50] = {{0}};
@@ -144,7 +145,7 @@ private:
       int fd = open(CompileErrorPath(file_name).c_str(),O_WRONLY | O_CREAT,0666);
       if(fd < 0)
       {
-        LOG(ERROR) << "open Compile file error" << std::endl;  
+        LOG(ERROR) << "open Compile file error" << endl;  
         exit(1);
       }
       dup2(fd,2);//期望写2能够把数据放到文件中
@@ -157,14 +158,14 @@ private:
     ret = stat(ExePath(file_name).c_str(),&st);
     if(ret < 0)
     {
-      LOG(INFO) << "Compile failed! " << file_name << std::endl; 
+      LOG(INFO) << "Compile failed! " << file_name << endl; 
       return false;
     }
-    LOG(INFO) << "Compile " << file_name << "OK!" << std::endl;
+    LOG(INFO) << "Compile " << file_name << "OK!" << endl;
     return true;
   }
   
-  static int Run(const std::string& file_name)
+  static int Run(const string& file_name)
   {
     //1.创建子进程
     int ret = fork();
